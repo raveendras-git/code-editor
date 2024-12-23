@@ -1,0 +1,129 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+  background-color: #1e1e2f;
+  color: #fff;
+}
+
+/* Header */
+h1 {
+  text-align: center;
+  padding: 15px 0;
+  background-color: #282a36;
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+/* Container */
+#editor-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+label {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+select {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: none;
+  background-color: #44475a;
+  color: #f8f8f2;
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+.CodeMirror {
+  width: 90%;
+  height: 400px;
+  margin: 10px 0;
+  padding: 0;
+  border-radius: 5px;
+  background-color: #44475a;
+  color: #f8f8f2;
+  border: none;
+  font-size: 1rem;
+}
+
+#code {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  height: 400px;
+  margin: 10px 0;
+  padding: 0;
+  border-radius: 5px;
+  color: #f8f8f2;
+  border: none;
+  font-size: 1rem;
+}
+
+#input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 62%;
+  height: 100px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #282a36;
+  color: #f8f8f2;
+  border: 1px solid #444;
+}
+
+pre#output {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 150px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #282a36;
+  color: #5cfa5c;
+  border: 1px solid #444;
+  overflow: auto; /* Enables scrollbar if content overflows */
+  white-space: pre-wrap; /* Wraps text within the box */
+  word-wrap: break-word; /* Breaks long words to fit within the box */
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #f8f8f2;
+  background-color: #44475a;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #6272a4; /* Lighter shade on hover */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Shadow effect */
+  transform: translateY(-2px); /* Slight upward lift */
+}
+
+button:active {
+  transform: translateY(0); /* Reset position when clicked */
+  box-shadow: none; /* Remove shadow */
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .CodeMirror, #code, #input, pre#output {
+    width: 95%;
+  }
+}
