@@ -92,9 +92,9 @@ pre#output {
   background-color: #282a36;
   color: #5cfa5c;
   border: 1px solid #444;
-  overflow: auto; /* Enables scrollbar if content overflows */
-  white-space: pre-wrap; /* Wraps text within the box */
-  word-wrap: break-word; /* Breaks long words to fit within the box */
+  overflow: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 button {
@@ -110,18 +110,16 @@ button {
 }
 
 button:hover {
-  background-color: #6272a4; /* Lighter shade on hover */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Shadow effect */
-  transform: translateY(-2px); /* Slight upward lift */
+  background-color: #6272a4;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
 }
 
 button:active {
-  transform: translateY(0); /* Reset position when clicked */
-  box-shadow: none; /* Remove shadow */
+  transform: translateY(0);
+  box-shadow: none;
 }
 
-
-/* Responsive Design */
 @media (max-width: 768px) {
   .CodeMirror, #code, #input, pre#output {
     width: 95%;
