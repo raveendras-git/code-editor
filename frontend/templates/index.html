@@ -1,57 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Online Code Editor</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-  <!-- CodeMirror CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Code Editor</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+  
 </head>
 <body>
-  <h1>Online Code Editor</h1>
-  <div id="editor-container">
-    <label for="language">Language:</label>
-    <select id="language">
-      <option value="python">Python</option>
-      <option value="c">C</option>
-      <option value="cpp">C++</option>
-      <option value="java">Java</option>
-    </select>
-    <!-- CodeMirror Editor -->
-    <div id="code"></div>
-    <textarea id="input" placeholder="Input..."></textarea>
-    <button id="run-btn">Run Code</button>
-    <pre id="output"></pre>
-  </div>
-  
-  <!-- Scripts -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
-  
-  <script>
-    // Initialize CodeMirror
-    const editor = CodeMirror(document.getElementById('code'), {
-      mode: 'python',
-      theme: 'dracula',
-      lineNumbers: true,
-      autoCloseBrackets: true,
-      matchBrackets: true,
-    });
+    <header>
+        <h1>Web Code Editor</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Projects</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="#profile">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    // Language selection handling
-    const languageSelector = document.getElementById('language');
-    languageSelector.addEventListener('change', () => {
-      const selectedLang = languageSelector.value;
-      let mode = 'text/x-csrc';
-      if (selectedLang === 'python') mode = 'python';
-      else if (selectedLang === 'java') mode = 'text/x-java';
-      else if (selectedLang === 'cpp') mode = 'text/x-c++src';
-      editor.setOption('mode', mode);
-    });
-  </script>
+    <div class="container">
+        <aside class="file-section">
+            <h2>Files</h2>
+            <ul id="file-list">
+                <li>main.py</li>
+                <li>index.html</li>
+                <li>script.js</li>
+                <li>style.css</li>
+            </ul>
+        </aside>
+
+        <main class="editor-section">
+          <div class="language-section">
+            <label for="language-select">Select Language: </label>
+            <select id="language-select">
+                <option value="python">Python</option>
+                <option value="c">C</option>
+                <option value="cpp">C++</option>
+            </select>
+        </div>
+        
+            <div id="code">
+            </div>
+            <br><br>
+            <button onclick="runCode()">Run Code</button>
+
+        </main>
+
+        <section class="io-section">
+            <div class="input-section">
+                <h3>Input</h3>
+                <textarea id="input-box" placeholder="Enter input..."></textarea>
+            </div>
+            <div class="output-section">
+                <h3>Output</h3>
+                <pre id="output-box"></pre>
+            </div>
+        </section>
+    </div>
+
+    <section class="profile-section" id="profile">
+        <h2>Profile</h2>
+        <img src="default.jpg" alt="Profile Picture">
+        <p>Name: John Doe</p>
+        <p>Projects: 5</p>
+    </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

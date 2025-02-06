@@ -3,7 +3,6 @@ import sys
 import tempfile
 import os
 
-
 def execute_code(language, code, user_input):
     # Create a temporary directory
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -11,7 +10,6 @@ def execute_code(language, code, user_input):
             "python": "script.py",
             "c": "program.c",
             "cpp": "program.cpp",
-            "java": "Program.java",
         }
 
         if language not in file_map:
@@ -34,9 +32,6 @@ def execute_code(language, code, user_input):
         elif language == "cpp":
             subprocess.run(["g++", filename, "-o", os.path.join(temp_dir, "program")])
             command = [os.path.join(temp_dir, "program")]
-        elif language == "java":
-            subprocess.run(["javac", filename])
-            command = ["java", "-cp", temp_dir, "Program"]
 
         # Execute the command
         process = subprocess.Popen(

@@ -1,19 +1,51 @@
-document.getElementById('run-btn').addEventListener('click', async () => {
-  const code = editor.getValue(); // Get code from CodeMirror
-  const input = document.getElementById('input').value || ''; // Ensure input is not null
-  const language = document.getElementById('language').value;
+function runCode() {
+  let code = document.getElementById("code-editor").value;
+  let input = document.getElementById("input-box").value;
+  let outputBox = document.getElementById("output-box");
 
   try {
-    const response = await fetch('/run', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, input, language }),
+      let result = eval(code);
+      outputBox.innerText = result !== undefined ? result : "No output";
+  } catch (error) {
+      outputBox.innerText = "Error: " + error.message;
+  }
+}
+
+  // Initialize CodeMirror
+  const editor = CodeMirror(document.getElementById('code'), {
+      mode: 'python',
+      theme: 'dracula',
+      lineNumbers: true,
+      autoCloseBrackets: true,
+      matchBrackets: true,
     });
 
-    const result = await response.json();
-    document.getElementById('output').innerText = result.output || 'No Output';
-  } catch (error) {
-    console.error('Error:', error);
-    document.getElementById('output').innerText = 'Error occurred while executing code';
+    function runCode() {
+      var language = document.getElementById("language-select").value; // Get the selected language
+      var code = editor.getValue(); // Get the code from the CodeMirror editor
+      var userInput = document.getElementById("input-box").value; // Get the input from the textarea
+  
+      // Create the data object to send to the backend
+      var data = {
+          language: language,
+          code: code,
+          input: userInput
+      };
+  
+      // Send the request to the backend
+      fetch('/run', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+          document.getElementById("output-box").textContent = data.output;
+      })
+      .catch(error => {
+          document.getElementById("output-box").textContent = "Error: " + error;
+      });
   }
-});
+  
