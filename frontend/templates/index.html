@@ -3,22 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Code Editor</title>
+    <title>Code Editor</title>
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- CodeMirror Styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
-  
 </head>
 <body>
     <header>
-        <h1>Web Code Editor</h1>
+        <h1>CodeEditor</h1>
         <nav>
             <ul>
                 <li><a href="#">Home</a></li>
                 <li><a href="#">Projects</a></li>
                 <li><a href="#">Settings</a></li>
-                <li><a href="#profile">Profile</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                    Logout
+                </a></li>
             </ul>
         </nav>
     </header>
@@ -26,29 +31,26 @@
     <div class="container">
         <aside class="file-section">
             <h2>Files</h2>
-            <ul id="file-list">
-                <li>main.py</li>
-                <li>index.html</li>
-                <li>script.js</li>
-                <li>style.css</li>
-            </ul>
+            <input type="file" id="fileInput">
+            <label for="fileInput" class="upload-btn">
+                <i class="fas fa-upload"></i> Upload File
+            </label>
+            <p id="fileName">No file selected</p>
         </aside>
 
         <main class="editor-section">
-          <div class="language-section">
-            <label for="language-select">Select Language: </label>
-            <select id="language-select">
-                <option value="python">Python</option>
-                <option value="c">C</option>
-                <option value="cpp">C++</option>
-            </select>
-        </div>
-        
-            <div id="code">
+            <div class="language-section">
+                <label for="language-select">Select Language: </label>
+                <select id="language-select">
+                    <option value="python">Python</option>
+                    <option value="c">C</option>
+                    <option value="cpp">C++</option>
+                </select>
             </div>
+
+            <div id="code"></div>
             <br><br>
             <button onclick="runCode()">Run Code</button>
-
         </main>
 
         <section class="io-section">
@@ -66,13 +68,19 @@
     <section class="profile-section" id="profile">
         <h2>Profile</h2>
         <img src="{{ url_for('static', filename='images/default.jpg') }}" alt="Profile Picture">
-        <p>Name: Tripurari </p>
-        <p>Projects: 5</p>
+        <p>Name: {{ session.get('full_name') }}</p>
+        <p>Logged in as: {{ session.get('username') }}</p>
+        <a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+            Logout
+        </a>
     </section>
+
+    <!-- CodeMirror Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
-    <script src="script.js"></script>
+
+    <!-- Custom JavaScript -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
