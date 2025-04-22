@@ -3,48 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #2e313d;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .profile-section {
-            background: rgb(45, 34, 83);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .profile-section img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 15px;
-        }
-        a {
-            color: white;
-            text-decoration: none;
-        }
-    </style>
+    <title>Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
 </head>
 <body>
-    <section class="profile-section" id="profile">
-        <h2>Profile</h2>
-        <img src="{{ url_for('static', filename='images/default.jpg') }}" alt="Profile Picture">
-        <p><strong>Name:</strong> {{ session.get('full_name', 'Guest') }}</p>
-        <p><strong>Logged in as:</strong> {{ session.get('username', 'Unknown') }}</p>
-        <a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
-            Logout
-        </a>
-        
-    </section>
+    <header>
+        <h1>CodeSphere</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/index">Editor</a></li>
+                <li><a href="/project">Projects</a></li>
+                <li><a href="/pip">pips</a></li>
+                <li><a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                    Logout
+                </a></li>
+                <li><a href="{{ url_for('html_editor') }}" class="editor-btn">HTML Editor</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="profile-container">
+        <h1>Welcome, {{ full_name }}</h1>
+        <h2>Username: {{ username }}</h2>
+
+        <h3>Recent Activities</h3>
+        <div class="scrollable-box">
+            <ul>
+                {% for activity in activities %}
+                    <li>{{ activity.action }} - {{ activity.timestamp }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <h3>Recent Codes</h3>
+        <div class="scrollable-box">
+            <ul>
+                {% for code in codes %}
+                    <li>
+                        <strong>Language:</strong> {{ code.language }} <br>
+                        <strong>Code:</strong> <pre>{{ code.code }}</pre>
+                        <strong>Timestamp:</strong> {{ code.timestamp }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
 </body>
 </html>

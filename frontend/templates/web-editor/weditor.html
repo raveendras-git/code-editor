@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Editor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/wstyle.css') }}">
+    <link rel="stylesheet" href="style.css" class="css">
+</head>
+<body>
+    <header>
+        <h1>CodeEditor</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/project">Projects</a></li>
+                <li><a href="/index">Editor</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                    Logout
+                </a></li>
+            </ul>
+        </nav>
+    </header>
+    <div id="content">
+        <div class="run-btn">
+            <div class="heading-box">
+                <h1 class="heading">...WEB CODE... </h1>
+            </div>
+            <div>
+                <button class="run-code html" onclick="toggleHTML()">HTML <span class="status-circle filled"></span></button>
+                <button class="run-code css" onclick="toggleCSS()">CSS <span class="status-circle filled"></span></button>
+                <button class="run-code js" onclick="toggleJS()">JS <span class="status-circle filled"></span></button>
+                <button class="run-code output" onclick="ShowOutput()">Output</button>
+            </div>
+        </div>
+
+        <div class="editor">
+            <div class="code-editor">
+                <textarea id="htmlCode" placeholder="HTML Code"></textarea>
+                <textarea id="cssCode" placeholder="CSS Code"></textarea>
+                <textarea id="jsCode" placeholder="JS Code"></textarea>
+            </div>
+            <iframe id="preview" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <div id="alertMessage">
+        <p>Please make sure you have a bigger display</p>
+        <button onclick="reloadPage()">Try Again</button>
+    </div>
+    <script src="{{ url_for('static', filename='js/wscript.js') }}"></script>
+    <script src="script.js"></script>
+</body>
+</html>

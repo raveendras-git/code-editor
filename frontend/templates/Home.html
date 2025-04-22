@@ -1,44 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeSphere - Home</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CodeSphere - Home</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body class="bg-gray-100">
+<body>
 
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <a href="/" class="text-2xl font-bold text-blue-600">CodeSphere</a>
-                <div class="space-x-6">
-                    <a href="/" class="text-gray-700 hover:text-blue-500">Home</a>
-                    <a href="/login" class="text-gray-700 hover:text-blue-500">Login</a>
-                    <a href="/signup" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Sign Up</a>
-                </div>
-            </div>
-        </div>
+  <!-- Navbar -->
+  <header>
+    <h1><a href="/" style="color: inherit; text-decoration: none;">CodeSphere</a></h1>
+    <nav>
+      <ul>
+        <li><a href="/index">Editor</a></li>
+        {% if session.get('username') %}
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/logout" class="logout">Logout</a></li>
+        {% else %}
+          <li><a href="/login">Login</a></li>
+          <li><a href="/signup" class="editor-btn">Sign Up</a></li>
+        {% endif %}
+      </ul>
     </nav>
+  </header>
 
-    <!-- Hero Section -->
-    <header class="flex flex-col-reverse md:flex-row items-center justify-center h-screen px-6 md:px-12">
-        <div class="text-center md:text-left max-w-lg">
-            <h1 class="text-4xl font-extrabold text-gray-900">Write, Compile, and Execute Code Online</h1>
-            <p class="mt-4 text-gray-600">
-                A powerful online code editor supporting Python, C, and C++.
-                Run your code instantly with error handling and a built-in file system.
-            </p>
-            <div class="mt-6">
-                <a href="/signup" class="px-6 py-3 text-white bg-blue-500 rounded-lg hover:bg-blue-600">Get Started</a>
-                <a href="/login" class="ml-4 px-6 py-3 text-blue-500 border border-blue-500 rounded-lg hover:bg-blue-500 hover:text-white">Login</a>
-            </div>
+  <!-- Hero Section -->
+  <section class="container">
+    <div class="editor-section">
+      <h2>Write, Compile, and Execute Code Online</h2>
+      <p>
+        A powerful online code editor supporting Python, C, and C++.<br/>
+        Run your code instantly with error handling and a built-in file system.
+      </p>
+      {% if not session.get('username') %}
+        <div style="margin-top: 20px;">
+          <a href="/signup" class="upload-btn">Get Started</a>
+          <a href="/login" class="upload-btn" style="background-color: transparent; color: #007bff; border: 2px solid #007bff;">Login</a>
         </div>
-        <div class="max-w-md">
-            <img src="{{ url_for('static', filename='images/editor.jpg') }}" alt="Code Editor Image" class="rounded-lg shadow-lg">
-        </div>
-    </header>
+      {% endif %}
+    </div>
+    <div class="io-section">
+      <img src="{{ url_for('static', filename='images/editor.jpg') }}" alt="Code Editor Image" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" />
+    </div>
+  </section>
 
 </body>
 </html>

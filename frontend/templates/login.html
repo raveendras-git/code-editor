@@ -20,7 +20,11 @@
             </div>
             <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Login</button>
         </form>
+        {% if error %}
+             <p style="color: red;">{{ error }}</p>
+        {% endif %}
         <p id="error-message" class="text-red-500 text-sm mt-2 hidden">Please fill in all fields.</p>
+        <p class="mt-3 text-sm text-center text-gray-600">Don't have any account? <a href="/signup" class="text-blue-500">Signup</a></p>
     </div>
     
     <script>

@@ -1,49 +1,48 @@
 import subprocess
-import sys
-import tempfile
 import os
+import sys
+
+#os bachane ke liye....
+BLOCKED_COMMANDS = ["os.system", "subprocess.call", "shutil.rmtree", "exec", "eval", "open('/etc/passwd'", "sys.exit"]
+
+def is_safe_code(code):
+    """ Check if the code contains blocked commands """
+    for cmd in BLOCKED_COMMANDS:
+        if cmd in code:
+            return False, f"Security Alert: Use of restricted command '{cmd}' detected!"
+    return True, "Code is safe to execute."
+
+UPLOADS_DIR = "uploads"
+os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 def execute_code(language, code, user_input):
-    # Create a temporary directory
-    with tempfile.TemporaryDirectory() as temp_dir:
-        file_map = {
-            "python": "script.py",
-            "c": "program.c",
-            "cpp": "program.cpp",
-        }
+    filename_map = {
+        "python": "script.py",
+        "c": "program.c",
+        "cpp": "program.cpp"
+    }
 
-        if language not in file_map:
-            raise ValueError("Unsupported language")
+    if language not in filename_map:
+        raise ValueError("Unsupported language")
 
-        # Create the full path for the file in the temporary directory
-        filename = os.path.join(temp_dir, file_map[language])
+    filename = os.path.join(UPLOADS_DIR, filename_map[language])
 
-        # Write the code to the temporary file
-        with open(filename, "w") as f:
-            f.write(code)
+    with open(filename, "w") as f:
+        f.write(code)
 
-        # Define commands for each language
-        if language == "python":
-            python_path = sys.executable  # Automatically gets the current Python interpreter path
-            command = [python_path, filename]
-        elif language == "c":
-            subprocess.run(["gcc", filename, "-o", os.path.join(temp_dir, "program")])
-            command = [os.path.join(temp_dir, "program")]
-        elif language == "cpp":
-            subprocess.run(["g++", filename, "-o", os.path.join(temp_dir, "program")])
-            command = [os.path.join(temp_dir, "program")]
+    if language == "python":
+        command = [sys.executable, filename]
+    elif language in ["c", "cpp"]:
+        binary_file = os.path.join(UPLOADS_DIR, "program")
+        compiler = "gcc" if language == "c" else "g++"
 
-        # Execute the command
-        process = subprocess.Popen(
-            command,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
+        compile_process = subprocess.run([compiler, filename, "-o", binary_file], capture_output=True, text=True)
+        if compile_process.returncode != 0:
+            return compile_process.stderr.strip()
 
-        stdout, stderr = process.communicate(input=user_input)
+        command = [binary_file]
 
-        if stderr:
-            return stderr.strip()
-        return stdout.strip()
+    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    stdout, stderr = process.communicate(input=user_input)
+
+    return stderr.strip() if stderr else stdout.strip()

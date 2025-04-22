@@ -1,27 +1,42 @@
-from flask import Flask, render_template, request, jsonify, redirect, session, url_for
+from flask import Flask, render_template, request, jsonify, redirect, session, url_for, send_from_directory
 from run_code import execute_code
-from pymongo import MongoClient
-from werkzeug.security import generate_password_hash, check_password_hash
+from database import (
+    create_user, get_user, verify_password, log_user_activity,
+    get_recent_activities, save_code, get_recent_codes
+)
+from install import install_package
 import secrets
+import os
 
 print(secrets.token_hex(32))
 
 app = Flask(__name__, template_folder="../frontend/templates", static_folder="../frontend/static")
 app.secret_key = "a73a1dd45267dc427f20f650385d0566e95b73189d076369be187445026ce9ad"
 
-# Configure MongoDB Connection
-mongo_client = MongoClient("mongodb://localhost:27017/")
-db = mongo_client["CodeSphereDB"]
-users_collection = db["users"]
-
+UPLOADS_DIR = "uploads"
+os.makedirs(UPLOADS_DIR, exist_ok=True)
+#home route
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('home.html', username=session.get("username"))
+#files 
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(UPLOADS_DIR, filename)
 
+from flask import session, redirect, url_for, render_template
+#code editor route
 @app.route('/index')
 def index():
+    if 'username' not in session:
+        return redirect(url_for('login_page'))  # Redirect to login page if not logged in
     return render_template('index.html')
 
+#html editor route
+@app.route('/editor')
+def html_editor():
+    return render_template('web-editor/weditor.html')
+#signup
 @app.route('/signup')
 def signup_page():
     return render_template('signup.html')
@@ -32,27 +47,22 @@ def signup():
 
     full_name = data.get("fullName")
     username = data.get("username")
+    email = data.get("email")
     password = data.get("password")
 
-    if not full_name or not username or not password:
+    if not full_name or not username or not email or not password:
         return jsonify({"message": "All fields are required!"}), 400
 
-    if users_collection.find_one({"username": username}):
-        return jsonify({"message": "Username already taken!"}), 400
+    result, status = create_user(full_name, username, email, password)  # Pass email
 
-    hashed_password = generate_password_hash(password)
+    if status == 201:
+        session["username"] = username
+        session["full_name"] = full_name
+        log_user_activity(username, "Signed Up")
 
-    users_collection.insert_one({
-        "full_name": full_name,
-        "username": username,
-        "password": hashed_password
-    })
+    return jsonify(result), status
 
-    session["username"] = username
-    session["full_name"] = full_name
-
-    return jsonify({"message": "Signup successful!"}), 201
-
+#login
 @app.route('/login')
 def login_page():
     return render_template('login.html')
@@ -63,33 +73,67 @@ def authenticate():
     password = request.form.get("password")
 
     if not username or not password:
-        return jsonify({"message": "Both username and password are required!"}), 400
+        return render_template("login.html", error="Both username and password are required!")
 
-    user = users_collection.find_one({"username": username})
+    user = get_user(username)
 
-    if user and check_password_hash(user["password"], password):
-        session["username"] = username  
-        session["full_name"] = user["full_name"]  
+    if not user:
+        return render_template("login.html", error="No user found with this username!")
 
-        return redirect(url_for('index'))  
+    if not verify_password(user["password"], password):
+        return render_template("login.html", error="Invalid password!")
 
-    return jsonify({"message": "Invalid credentials!"}), 401
+    session["username"] = username  
+    session["full_name"] = user["full_name"]  
+    log_user_activity(username, "Logged In")
 
+    return redirect(url_for('index'))  
+
+#profile page route
 @app.route('/profile')
 def profile():
     if "username" not in session:
         return redirect(url_for("login_page"))
 
-    return render_template("profile.html", full_name=session.get("full_name"), username=session.get("username"))
+    username = session["username"]
+    activities = get_recent_activities(username)
+    codes = get_recent_codes(username)
 
+    return render_template("profile.html", full_name=session["full_name"], username=username, activities=activities, codes=codes)
+@app.route('/project')#project page route
+def project():
+    if "username" not in session:
+        return redirect(url_for("login_page"))
+
+    username = session["username"]
+    codes = get_recent_codes(username)
+
+    return render_template("project.html", full_name=session["full_name"], username=username, codes=codes)
+#logout
 @app.route('/logout')
 def logout():
+    if "username" in session:
+        log_user_activity(session["username"], "Logged Out")
     session.clear()  
-    return redirect(url_for("login_page"))
+    return redirect(url_for("home"))
 
+#pip installation page
+@app.route('/pip')
+def pip():
+    return render_template('pip.html')  # Ensure correct file name
 
+@app.route('/install', methods=['POST'])
+def install():
+    package_name = request.form.get('package')  # Ensure correct key
+    result = install_package(package_name)
+    return jsonify(result)
+#code execution logic route
 @app.route('/run', methods=['POST'])
 def run_code():
+    if "username" not in session:
+        return jsonify({"message": "You must be logged in to run code!"}), 401
+
+    username = session["username"]
     data = request.get_json(force=True)
     language = data.get("language")
     code = data.get("code")
@@ -97,9 +141,16 @@ def run_code():
 
     try:
         output = execute_code(language, code, user_input)
+
+        # user's log activity
+        log_user_activity(username, f"Ran {language} code")
+        save_code(username, code, language)
+
+
         return jsonify({"output": output})
     except Exception as e:
         return jsonify({"output": str(e)}), 400
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -3,40 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Editor</title>
+    <title>CodeSphere</title>
     
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 
-    <!-- CodeMirror Styles -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+<!-- Include CodeMirror Library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/theme/neat.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/addon/hint/show-hint.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/mode/clike/clike.min.js"></script>
+
+<!-- Auto-completion Addons -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/addon/hint/anyword-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/addon/hint/javascript-hint.min.js"></script>
+
 </head>
 <body>
     <header>
-        <h1>CodeEditor</h1>
+        <h1>CodeSphere</h1>
         <nav>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Projects</a></li>
-                <li><a href="#">Settings</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/project">Projects</a></li>
+                <li><a href="/pip">pips</a></li>
                 <li><a href="/profile">Profile</a></li>
                 <li><a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
                     Logout
                 </a></li>
+                <li><a href="{{ url_for('html_editor') }}">HTML Editor</a>
+                </li>
             </ul>
         </nav>
     </header>
 
     <div class="container">
+        <button id="toggleFileSection" class="toggle-btn">📂</button>        
         <aside class="file-section">
             <h2>Files</h2>
-            <input type="file" id="fileInput">
-            <label for="fileInput" class="upload-btn">
-                <i class="fas fa-upload"></i> Upload File
-            </label>
+            <input type="file" id="fileInput" hidden>
+            <button onclick="selectFolder()">📁 Open Folder</button>
+            <ul id="folderTree"></ul>
             <p id="fileName">No file selected</p>
         </aside>
+        
 
         <main class="editor-section">
             <div class="language-section">
@@ -47,10 +60,12 @@
                     <option value="cpp">C++</option>
                 </select>
             </div>
-
-            <div id="code"></div>
+            <div class="editor">
+            
+            <div id="code" disabled></div>
             <br><br>
             <button onclick="runCode()">Run Code</button>
+            </div>
         </main>
 
         <section class="io-section">
@@ -63,24 +78,26 @@
                 <pre id="output-box"></pre>
             </div>
         </section>
-    </div>
-
-    <section class="profile-section" id="profile">
-        <h2>Profile</h2>
-        <img src="{{ url_for('static', filename='images/default.jpg') }}" alt="Profile Picture">
-        <p>Name: {{ session.get('full_name') }}</p>
-        <p>Logged in as: {{ session.get('username') }}</p>
-        <a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
-            Logout
-        </a>
-    </section>
 
     <!-- CodeMirror Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/addon/hint/anyword-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/addon/hint/javascript-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/addon/hint/html-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/addon/hint/css-hint.min.js"></script>
+
 
     <!-- Custom JavaScript -->
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/fscript.js') }}"></script>
 </body>
 </html>

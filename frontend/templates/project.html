@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body>
+    <header>
+        <h1>CodeSphere</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/index">Editor</a></li>
+                <li><a href="/pip">pips</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                    Logout
+                </a></li>
+                <li><a href="{{ url_for('html_editor') }}" class="editor-btn">HTML Editor</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <h3>Recent Codes</h3>
+<div class="scrollable-box">
+    <ul>
+        {% for code in codes %}
+            <li>
+                <strong>Language:</strong> {{ code.language }} <br>
+                <strong>Code:</strong> <pre>{{ code.code }}</pre>
+                <strong>Timestamp:</strong> {{ code.timestamp }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>
